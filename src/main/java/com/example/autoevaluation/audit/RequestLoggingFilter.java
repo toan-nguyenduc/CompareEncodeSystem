@@ -33,9 +33,9 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
                 username = authentication.getName();
             }
 
-            // Chỉ log các request gọi vào API hoặc HTML (Bỏ qua các file tĩnh như css, js để đỡ rác log)
+            // Chỉ log các request gọi vào API để tránh rác log (bỏ qua trang HTML, file tĩnh, websockets)
             String uri = request.getRequestURI();
-            if (!uri.endsWith(".css") && !uri.endsWith(".js") && !uri.endsWith(".png") && !uri.endsWith(".ico") && !uri.startsWith("/ws-eval")) {
+            if (uri.startsWith("/api")) {
                 log.info("Request [{}] {} - User: {} - Status: {} - {}ms", 
                     request.getMethod(), uri, username, response.getStatus(), duration);
             }

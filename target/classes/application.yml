@@ -32,8 +32,8 @@ spring:
       # KHÔNG cho phép Spring Boot tự động tạo/xóa bảng trong DB
       # (Cực kỳ quan trọng khi lên Production, giữ nguyên là 'none')
       ddl-auto: none
-    # In ra console các câu lệnh SQL để dễ debug
-    show-sql: true
+    # Đã tắt in SQL ra console để tránh bị spam do Polling Job chạy liên tục
+    show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect

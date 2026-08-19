@@ -38,7 +38,7 @@ public class EvaluationPollingJob {
 
     @Scheduled(fixedDelayString = "${app.polling.delay}")
     public void pollEncodingStatus() {
-        log.info("Running evaluation polling job...");
+        log.debug("Running evaluation polling job...");
         
         List<TrackedVideo> activeVideos = trackedVideoRepository.findByTrackingStatusIn(java.util.Arrays.asList("encoding", "evaluating"));
         
