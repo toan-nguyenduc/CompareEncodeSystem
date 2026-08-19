@@ -50,3 +50,7 @@ logs/
 .env
 mysql_data/
 docker-compose.override.yml
+
+
+.vscode/
+.vscode/launch.json
