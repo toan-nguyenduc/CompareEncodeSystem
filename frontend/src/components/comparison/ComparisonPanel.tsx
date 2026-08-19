@@ -79,7 +79,7 @@ export function ComparisonPanel({ data }: ComparisonPanelProps) {
           Hovered Segment:{' '}
           <span className="text-blue-600">{segment ? segment.segment_index : '_ _'}</span>
         </h3>
-        {/* <span className="text-xs text-gray-400 uppercase tracking-wide font-medium">Sys 1 vs Sys 0</span> */}
+        <span className="text-xs text-gray-400 uppercase tracking-wide font-medium">Old System vs PE</span>
       </div>
 
       {/* Metrics table */}
@@ -88,8 +88,8 @@ export function ComparisonPanel({ data }: ComparisonPanelProps) {
           <thead>
             <tr className="text-[11px] text-gray-400 font-semibold uppercase tracking-wider border-b border-gray-100">
               <th className="text-left pb-2.5 font-semibold">Metric</th>
-              <th className="text-right pb-2.5 font-semibold w-[80px]">Sys 1</th>
-              <th className="text-right pb-2.5 font-semibold w-[80px]">Sys 0</th>
+              <th className="text-right pb-2.5 font-semibold w-[80px]">Old System</th>
+              <th className="text-right pb-2.5 font-semibold w-[80px]">PE</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">

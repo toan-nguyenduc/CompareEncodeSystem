@@ -206,9 +206,9 @@ export function VMAFChart({ data }: VMAFChartProps) {
     <div ref={containerRef} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
       {/* ── Custom Legends ── */}
       <div className="flex flex-col md:flex-row border-b border-gray-100">
-        {renderLegend(OLD_SERIES, "System 1")}
+        {renderLegend(OLD_SERIES, "Old System")}
         <div className="hidden md:block w-px bg-gray-200"></div>
-        {renderLegend(NEW_SERIES, "System 0")}
+        {renderLegend(NEW_SERIES, "PE")}
       </div>
 
       {focusedSeries && (

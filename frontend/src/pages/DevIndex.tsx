@@ -10,6 +10,15 @@ export function DevIndex() {
           Click any link below to test the comparison page. These links are dynamically generated based on the current mock data.
         </p>
 
+        <div className="mb-6 flex">
+          <Link
+            to="/dashboard"
+            className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition-colors shadow-sm"
+          >
+            View Aggregate Dashboard
+          </Link>
+        </div>
+
         <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
           {allVideoSummaries.map((video) => (
             <div key={video.video_id} className="border border-gray-100 rounded-lg p-4 bg-gray-50">
@@ -26,6 +35,12 @@ export function DevIndex() {
                     Test Profile: {profile}
                   </Link>
                 ))}
+                <Link
+                  to={`/cross-profile/${video.video_id}`}
+                  className="inline-flex items-center px-3 py-1.5 bg-emerald-50 text-emerald-700 text-sm font-medium rounded-md hover:bg-emerald-100 transition-colors border border-emerald-200"
+                >
+                  Cross-Profile Analysis
+                </Link>
               </div>
             </div>
           ))}

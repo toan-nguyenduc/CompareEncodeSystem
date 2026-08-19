@@ -20,6 +20,18 @@ export interface SegmentMetrics {
   file_size: number
 }
 
+/** Response từ GET /api/dashboard/summary */
+export interface DashboardVideoSummary {
+  videoId: string
+  videoName: string
+  avgVmafNew: number
+  avgVmafOld: number
+  totalSizeNewBytes: number
+  totalSizeOldBytes: number
+  winCount: number
+  loseCount: number
+}
+
 export interface SegmentComparison {
   segment_index: number
   start_time: number
@@ -39,7 +51,7 @@ export interface VideoComparison {
 export interface VmafSegmentMetric {
   id: number
   video_id: number
-  system_id: 0 | 1 // 0 = New, 1 = Old
+  system_id: 0 | 1 // 0 = PE, 1 = Old System
   profile_name: string
   segment_index: number
   start_time: number

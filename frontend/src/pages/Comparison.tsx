@@ -5,6 +5,12 @@ import { useVideoComparison } from '@/hooks/useQueries'
 import { VMAFChart } from '@/components/comparison/VMAFChart'
 import { SegmentSlider } from '@/components/comparison/SegmentSlider'
 import { ComparisonPanel } from '@/components/comparison/ComparisonPanel'
+import { SummaryCards } from '@/components/comparison/SummaryCards'
+import { VMAFDiffChart } from '@/components/comparison/VMAFDiffChart'
+import { FileSizeChart } from '@/components/comparison/FileSizeChart'
+import { EfficiencyScatter } from '@/components/comparison/EfficiencyScatter'
+import { VMAFHistogram } from '@/components/comparison/VMAFHistogram'
+import { VMAFRangeChart } from '@/components/comparison/VMAFRangeChart'
 import { useComparisonStore } from '@/store/useComparisonStore'
 
 export function Comparison() {
@@ -84,11 +90,25 @@ export function Comparison() {
 
       {/* Main content */}
       <div className="container max-w-7xl mx-auto px-6 py-8 space-y-6">
+        <SummaryCards data={comparisonData} />
+        
         <VMAFChart data={comparisonData} />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <SegmentSlider data={comparisonData} />
           <ComparisonPanel data={comparisonData} />
+        </div>
+
+        <VMAFDiffChart data={comparisonData} />
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <FileSizeChart data={comparisonData} />
+          <EfficiencyScatter data={comparisonData} />
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <VMAFHistogram data={comparisonData} />
+          <VMAFRangeChart data={comparisonData} />
         </div>
       </div>
     </div>
