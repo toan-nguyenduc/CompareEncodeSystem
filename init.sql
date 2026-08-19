@@ -26,6 +26,16 @@ CREATE TABLE IF NOT EXISTS tracked_video_history (
     FOREIGN KEY (tracked_video_id) REFERENCES tracked_videos(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS users (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(50) DEFAULT 'ROLE_ADMIN'
+);
+
+-- Thêm tài khoản admin mặc định với password là '123456' đã được mã hóa BCrypt
+INSERT IGNORE INTO users (username, password, role) VALUES ('admin', '$2a$10$X8j3aX5m6gR.T.N.p5hF/Ok8L4uQ2t3c6hG.rXz8K3xW1v7M8f2yW', 'ROLE_ADMIN');
+
 -- 1. Setup CSM DB
 USE csm_db;
 

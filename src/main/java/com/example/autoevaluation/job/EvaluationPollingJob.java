@@ -76,11 +76,11 @@ public class EvaluationPollingJob {
                     video.setTrackingStatus("completed"); // Always completed if no error
                     trackedVideoRepository.save(video);
                     
+                    saveHistory(video);
+
                     // Broadcast over WebSocket
                     broadcast(video);
                     log.info("Evaluation completed. Score: {}. Broadcasted to frontend.", score);
-                    
-                    saveHistory(video);
                 } else {
                     log.warn("Score is null in evaluation response.");
                     failVideo(video);
@@ -98,8 +98,8 @@ public class EvaluationPollingJob {
     private void failVideo(TrackedVideo video) {
         video.setTrackingStatus("error");
         trackedVideoRepository.save(video);
-        broadcast(video);
         saveHistory(video);
+        broadcast(video);
     }
 
     private void saveHistory(TrackedVideo video) {

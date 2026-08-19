@@ -7,14 +7,24 @@ const addVideoForm = document.getElementById('addVideoForm');
 
 // Initialize App
 document.addEventListener('DOMContentLoaded', () => {
-    fetchVideos();
+    loadVideos();
     connectWebSocket();
 });
 
-// Fetch all videos
-async function fetchVideos() {
+async function fetchAPI(url, options = {}) {
+    const response = await fetch(url, options);
+    if (response.redirected && response.url.includes('login')) {
+        window.location.href = '/login.html';
+        return null;
+    }
+    return response;
+}
+
+// Initial Load
+async function loadVideos() {
     try {
-        const response = await fetch(API_BASE);
+        const response = await fetchAPI(API_BASE);
+        if (!response) return;
         const videos = await response.json();
         renderTable(videos);
     } catch (error) {
@@ -32,12 +42,14 @@ addVideoForm.addEventListener('submit', async (e) => {
     addBtn.disabled = true;
     addBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý...';
     try {
-        const response = await fetch(API_BASE, {
+        const response = await fetchAPI(API_BASE, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ csmId: parseInt(csmId), peId: parseInt(peId), convertPriority: 10000 })
         });
         
+        if (!response) return;
+
         if (response.ok) {
             const newVideo = await response.json();
             appendRow(newVideo);
@@ -70,9 +82,10 @@ async function triggerEncode(id) {
     }
     
     try {
-        const response = await fetch(`${API_BASE}/${id}/encode?priority=${priority}`, {
+        const response = await fetchAPI(`${API_BASE}/${id}/encode?priority=${priority}`, {
             method: 'POST'
         });
+        if (!response) return;
         
         if (response.ok) {
             const updatedVideo = await response.json();
@@ -257,7 +270,8 @@ async function loadHistoryData(id) {
     const container = document.getElementById(`history-container-${id}`);
     try {
         container.innerHTML = '<div class="empty-state" style="padding:1rem;"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải lịch sử...</div>';
-        const response = await fetch(`${API_BASE}/${id}/history`);
+        const response = await fetchAPI(`${API_BASE}/${id}/history`);
+        if (!response) return;
         const historyList = await response.json();
         
         if (historyList.length === 0) {
