@@ -16,6 +16,15 @@ public class Video {
     @Id
     private Long id;
     
+    @Column(name = "modified_at")
+    private LocalDateTime modifiedAt;
+
+    @Column(name = "csm_media_id")
+    private Long csmMediaId;
+
+    @Column(name = "title")
+    private String title;
+
     @Column(name = "convert_end_time")
     private LocalDateTime convertEndTime;
 

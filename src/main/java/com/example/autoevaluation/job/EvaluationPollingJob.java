@@ -39,9 +39,16 @@ public class EvaluationPollingJob {
     @Scheduled(fixedDelayString = "${app.polling.delay}")
     public void pollEncodingStatus() {
         log.info("Running evaluation polling job...");
-        List<TrackedVideo> encodingVideos = trackedVideoRepository.findByTrackingStatus("encoding");
         
-        for (TrackedVideo video : encodingVideos) {
+        List<TrackedVideo> activeVideos = trackedVideoRepository.findByTrackingStatusIn(java.util.Arrays.asList("encoding", "evaluating"));
+        
+        for (TrackedVideo video : activeVideos) {
+            if ("evaluating".equals(video.getTrackingStatus())) {
+                log.info("Found zombie video {} in evaluating state, retrying evaluation...", video.getId());
+                evaluateVideo(video);
+                continue;
+            }
+
             Optional<Video> peVideoOpt = peVideoRepository.findById(video.getPeId());
             if (peVideoOpt.isPresent()) {
                 Video peVideo = peVideoOpt.get();

@@ -1,6 +1,13 @@
 package com.example.autoevaluation.entity.autoeval;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -9,6 +16,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "tracked_videos")
 @Data
+@EntityListeners(AuditingEntityListener.class)
 public class TrackedVideo {
 
     @Id
@@ -30,14 +38,27 @@ public class TrackedVideo {
     @Column(name = "score")
     private Integer score;
 
-    @Column(name = "created_at")
+    @CreatedDate
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Transient
+    @CreatedBy
+    @Column(name = "created_by", updatable = false)
+    private String createdBy;
+
+    @LastModifiedBy
+    @Column(name = "updated_by")
+    private String updatedBy;
+
+    @Column(name = "video_name")
     private String videoName;
+
+    @org.hibernate.annotations.Formula("(SELECT COUNT(*) FROM tracked_video_history h WHERE h.tracked_video_id = id)")
+    private int historyCount;
 
     @JsonProperty("evaluationResult")
     public String getEvaluationResult() {

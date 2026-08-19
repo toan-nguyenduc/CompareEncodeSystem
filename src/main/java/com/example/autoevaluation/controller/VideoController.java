@@ -30,8 +30,11 @@ public class VideoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TrackedVideo>> getVideos() {
-        return ResponseEntity.ok(autoEvaluationService.getAllTrackedVideos());
+    public ResponseEntity<org.springframework.data.domain.Page<TrackedVideo>> getVideos(
+            @RequestParam(defaultValue = "") String search,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(autoEvaluationService.getTrackedVideos(search, page, size));
     }
 
     @PostMapping("/{id}/encode")

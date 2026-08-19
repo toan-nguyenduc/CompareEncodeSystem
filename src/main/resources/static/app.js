@@ -11,6 +11,34 @@ document.addEventListener('DOMContentLoaded', () => {
     connectWebSocket();
 });
 
+// Toast System
+function showToast(title, message, type = 'success') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    
+    const icon = type === 'success' ? 'fa-check-circle' : 'fa-circle-exclamation';
+    
+    toast.innerHTML = `
+        <div class="toast-icon"><i class="fa-solid ${icon}"></i></div>
+        <div class="toast-content">
+            <span class="toast-title">${title}</span>
+            <span class="toast-msg">${message}</span>
+        </div>
+    `;
+    
+    container.appendChild(toast);
+    
+    // Trigger animation
+    setTimeout(() => toast.classList.add('show'), 10);
+    
+    // Auto remove
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
 async function fetchAPI(url, options = {}) {
     const response = await fetch(url, options);
     if (response.redirected && response.url.includes('login')) {
@@ -20,23 +48,67 @@ async function fetchAPI(url, options = {}) {
     return response;
 }
 
+let currentPage = 0;
+let currentSearch = '';
+const PAGE_SIZE = 10;
+
 // Initial Load
-async function loadVideos() {
+async function loadVideos(page = 0, search = '') {
     try {
-        const response = await fetchAPI(API_BASE);
+        const response = await fetchAPI(`${API_BASE}?page=${page}&size=${PAGE_SIZE}&search=${encodeURIComponent(search)}`);
         if (!response) return;
-        const videos = await response.json();
-        renderTable(videos);
+        const pageData = await response.json();
+        
+        currentPage = pageData.number;
+        currentSearch = search;
+        
+        renderTable(pageData.content);
+        renderPagination(pageData);
     } catch (error) {
         console.error("Error fetching videos:", error);
     }
 }
 
+function renderPagination(pageData) {
+    const container = document.getElementById('pagination');
+    if (!container) return;
+    container.innerHTML = '';
+    
+    if (pageData.totalPages <= 1) return;
+
+    // Prev Button
+    const prevBtn = document.createElement('button');
+    prevBtn.className = 'btn btn-secondary btn-sm';
+    prevBtn.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
+    prevBtn.disabled = pageData.first;
+    prevBtn.onclick = () => loadVideos(currentPage - 1, currentSearch);
+    container.appendChild(prevBtn);
+
+    // Page Numbers
+    for (let i = 0; i < pageData.totalPages; i++) {
+        const pageBtn = document.createElement('button');
+        pageBtn.className = i === currentPage ? 'btn btn-primary btn-sm' : 'btn btn-secondary btn-sm';
+        pageBtn.innerText = i + 1;
+        pageBtn.onclick = () => loadVideos(i, currentSearch);
+        container.appendChild(pageBtn);
+    }
+
+    // Next Button
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'btn btn-secondary btn-sm';
+    nextBtn.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+    nextBtn.disabled = pageData.last;
+    nextBtn.onclick = () => loadVideos(currentPage + 1, currentSearch);
+    container.appendChild(nextBtn);
+}
+
 // Add new video
 addVideoForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const csmId = document.getElementById('csmId').value;
     const peId = document.getElementById('peId').value;
+    
+    if (!peId) return;
+
     const addBtn = document.getElementById('addBtn');
     
     addBtn.disabled = true;
@@ -45,7 +117,7 @@ addVideoForm.addEventListener('submit', async (e) => {
         const response = await fetchAPI(API_BASE, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ csmId: parseInt(csmId), peId: parseInt(peId), convertPriority: 10000 })
+            body: JSON.stringify({ peId: parseInt(peId), convertPriority: 10000 })
         });
         
         if (!response) return;
@@ -54,17 +126,27 @@ addVideoForm.addEventListener('submit', async (e) => {
             const newVideo = await response.json();
             appendRow(newVideo);
             addVideoForm.reset();
+            showToast('Thành công', 'Đã thêm video vào danh sách theo dõi', 'success');
         } else {
             const errData = await response.json();
-            alert(errData.message || 'Lỗi khi thêm video!');
+            showToast('Lỗi', errData.message || 'Lỗi khi thêm video!', 'error');
         }
     } catch (error) {
-        console.error("Error adding video:", error);
-        alert('Lỗi kết nối máy chủ!');
+        showToast('Lỗi mạng', 'Lỗi kết nối máy chủ!', 'error');
     } finally {
         addBtn.disabled = false;
-        addBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Theo Dõi Ngay';
+        addBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Theo Dõi Ngay';
     }
+});
+
+// Search functionality (Server-side with debounce)
+let searchTimeout;
+document.getElementById('searchInput').addEventListener('input', function(e) {
+    const term = e.target.value;
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        loadVideos(0, term);
+    }, 300);
 });
 
 // Trigger encode
@@ -90,8 +172,9 @@ async function triggerEncode(id) {
         if (response.ok) {
             const updatedVideo = await response.json();
             updateRow(updatedVideo);
+            showToast('Thành công', 'Đã ra lệnh Trigger Encode', 'success');
         } else {
-            alert('Lỗi khi trigger encode!');
+            showToast('Thất bại', 'Lỗi khi trigger encode!', 'error');
             if(btn) btn.disabled = false;
         }
     } catch (error) {
@@ -130,7 +213,7 @@ function connectWebSocket() {
 function renderTable(videos) {
     videoTableBody.innerHTML = '';
     if(videos.length === 0) {
-        videoTableBody.innerHTML = `<tr><td colspan="10" class="empty-state">
+        videoTableBody.innerHTML = `<tr><td colspan="9" class="empty-state">
             <i class="fa-solid fa-folder-open"></i><br>
             Chưa có video nào trong danh sách theo dõi.
         </td></tr>`;
@@ -195,10 +278,13 @@ function generateRowHTML(video) {
     const videoName = video.videoName ? `<span style="color:#0f172a;font-weight:500;">${video.videoName}</span>` : `<em style="color:#94a3b8">Không tìm thấy</em>`;
     const displayStatus = getDisplayStatus(video.trackingStatus, video.evaluationResult);
     
+    const badgeHtml = video.historyCount > 0 
+        ? `<span style="background: #e2e8f0; color: #475569; padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; margin-left: 4px; font-weight: 600;" title="Số lần chạy: ${video.historyCount}">${video.historyCount}</span>` 
+        : `<span style="background: #f1f5f9; color: #94a3b8; padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; margin-left: 4px;" title="Chưa có lịch sử">0</span>`;
+
     return `
-        <td class="text-center"><i class="fa-solid fa-chevron-right chevron-icon"></i></td>
+        <td class="text-center"><i class="fa-solid fa-chevron-right chevron-icon"></i> ${badgeHtml}</td>
         <td><strong>#${video.id}</strong></td>
-        <td>${video.csmId}</td>
         <td>${videoName}</td>
         <td>${video.peId}</td>
         <td><input type="number" class="priority-inline-input" id="priority-${video.id}" value="${priorityVal}" style="width:80px; padding:0.25rem; border:1px solid #cbd5e1; border-radius:4px;" onclick="event.stopPropagation()"></td>

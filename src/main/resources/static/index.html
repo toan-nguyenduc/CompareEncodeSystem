@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="style.css?v=5">
 </head>
 <body>
+    <div id="toast-container"></div>
     <div class="app-container">
         <header class="app-header">
             <div class="header-title">
@@ -39,22 +40,15 @@
             <div class="card-body">
                 <form id="addVideoForm" class="add-video-form">
                     <div class="form-group">
-                        <label for="csmId">CSM ID</label>
-                        <div class="input-wrapper">
-                            <i class="fa-solid fa-database"></i>
-                            <input type="number" id="csmId" name="csmId" required placeholder="Nhập ID...">
-                        </div>
-                    </div>
-                    <div class="form-group">
                         <label for="peId">PE ID</label>
                         <div class="input-wrapper">
                             <i class="fa-solid fa-film"></i>
-                            <input type="number" id="peId" name="peId" required placeholder="Nhập ID...">
+                            <input type="number" id="peId" name="peId" required placeholder="Nhập PE Video ID...">
                         </div>
                     </div>
                     <div class="form-group btn-group" style="align-items: flex-end; display: flex;">
                         <button type="submit" class="btn btn-primary" id="addBtn">
-                            <i class="fa-solid fa-paper-plane"></i> Theo Dõi Ngay
+                            <i class="fa-solid fa-plus"></i> Theo Dõi Ngay
                         </button>
                     </div>
                 </form>
@@ -62,29 +56,39 @@
         </section>
 
         <section class="card video-list-section">
-            <div class="card-header">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
                 <h2><i class="fa-solid fa-list-check"></i> Danh sách đang theo dõi</h2>
+                <div class="search-wrapper" style="position: relative; width: 300px;">
+                    <i class="fa-solid fa-search" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
+                    <input type="text" id="searchInput" placeholder="Tìm tên hoặc PE ID..." style="width: 100%; padding: 0.5rem 1rem 0.5rem 2.5rem; border: 1px solid #cbd5e1; border-radius: 6px; outline: none;">
+                </div>
             </div>
             <div class="table-responsive">
                 <table id="videoTable" class="modern-table">
                     <thead>
                         <tr>
                             <th width="40"></th>
-                            <th width="80">Track ID</th>
-                            <th>CSM ID</th>
+                            <th>Tracking ID</th>
                             <th>Tên Video</th>
                             <th>PE ID</th>
                             <th>Priority</th>
                             <th>Trạng thái</th>
-                            <th>Điểm VMAF</th>
-                            <th>Cập nhật gần nhất</th>
-                            <th width="150" class="text-right">Hành động</th>
+                            <th>Điểm số</th>
+                            <th>Cập nhật lúc</th>
+                            <th class="text-right">Hành động</th>
                         </tr>
                     </thead>
                     <tbody id="videoTableBody">
-                        <!-- Rows will be populated by JS -->
+                        <tr><td colspan="9" class="empty-state">
+                            <i class="fa-solid fa-spinner fa-spin" style="font-size: 2rem; color: #3b82f6; margin-bottom: 1rem;"></i><br>
+                            Đang tải dữ liệu...
+                        </td></tr>
                     </tbody>
                 </table>
+            </div>
+            
+            <div id="pagination" class="pagination-container" style="margin-top: 1rem; display: flex; justify-content: flex-end; gap: 0.25rem;">
+                <!-- Pagination buttons will be populated by JS -->
             </div>
         </section>
     </div>

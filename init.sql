@@ -9,11 +9,14 @@ CREATE TABLE IF NOT EXISTS tracked_videos (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     csm_id BIGINT NOT NULL,
     pe_id BIGINT NOT NULL,
+    video_name VARCHAR(255),
     convert_priority INT,
     tracking_status VARCHAR(50) DEFAULT 'pending',
     score INT DEFAULT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by VARCHAR(50),
+    updated_by VARCHAR(50)
 );
 
 CREATE TABLE IF NOT EXISTS tracked_video_history (
@@ -33,8 +36,32 @@ CREATE TABLE IF NOT EXISTS users (
     role VARCHAR(50) DEFAULT 'ROLE_ADMIN'
 );
 
--- Thêm tài khoản admin mặc định với password là '123456' đã được mã hóa BCrypt
-INSERT IGNORE INTO users (username, password, role) VALUES ('admin', '$2a$10$X8j3aX5m6gR.T.N.p5hF/Ok8L4uQ2t3c6hG.rXz8K3xW1v7M8f2yW', 'ROLE_ADMIN');
+-- Tài khoản admin mặc định sẽ được tạo tự động trong code Spring Boot (SecurityConfig.java)
+
+-- Thêm 15 record mẫu cho tracked_videos để test Pagination ngay khi khởi động
+INSERT INTO tracked_videos (id, csm_id, pe_id, video_name, convert_priority, tracking_status, score) VALUES
+(1, 1, 101, 'Avengers: Endgame', 10000, 'completed', 95),
+(2, 2, 102, 'Inception', 10000, 'completed', 82),
+(3, 3, 103, 'Interstellar', 10000, 'completed', 88),
+(4, 4, 104, 'The Dark Knight', 10000, 'error', NULL),
+(5, 5, 105, 'Avatar: The Way of Water', 10000, 'evaluating', NULL),
+(6, 6, 106, 'Spider-Man: No Way Home', 10000, 'encoding', NULL),
+(7, 7, 107, 'Titanic', 10000, 'pending', NULL),
+(8, 8, 108, 'The Matrix', 10000, 'completed', 91),
+(9, 9, 109, 'Oppenheimer', 10000, 'completed', 75),
+(10, 10, 110, 'Parasite', 10000, 'completed', 86),
+(11, 1, 111, 'Avengers: Endgame (Dub)', 10000, 'completed', 99),
+(12, 2, 112, 'Inception (4K)', 10000, 'pending', NULL),
+(13, 3, 113, 'Interstellar (IMAX)', 10000, 'encoding', NULL),
+(14, 4, 114, 'The Dark Knight (Remastered)', 10000, 'error', NULL),
+(15, 5, 115, 'Avatar 2 (3D)', 10000, 'completed', 80);
+
+-- Thêm vài record lịch sử mẫu cho video 1 và 2
+INSERT INTO tracked_video_history (tracked_video_id, score, tracking_status, convert_priority) VALUES
+(1, 70, 'error', 10000),
+(1, 85, 'completed', 10000),
+(1, 95, 'completed', 10000),
+(2, 82, 'completed', 10000);
 
 -- 1. Setup CSM DB
 USE csm_db;
@@ -105,8 +132,18 @@ CREATE TABLE IF NOT EXISTS csm_media (
     ai_review_status TINYINT DEFAULT NULL
 );
 
--- Thêm 1 record mẫu để test (chưa encode)
-INSERT INTO csm_media (id, name, status, convert_status) VALUES (1, 'Test Video 1', 1, 0);
+-- Thêm 10 record mẫu để test (chưa encode)
+INSERT INTO csm_media (id, name, status, convert_status) VALUES 
+(1, 'Avengers: Endgame', 1, 0),
+(2, 'Inception', 1, 0),
+(3, 'Interstellar', 1, 0),
+(4, 'The Dark Knight', 1, 0),
+(5, 'Avatar: The Way of Water', 1, 0),
+(6, 'Spider-Man: No Way Home', 1, 0),
+(7, 'Titanic', 1, 0),
+(8, 'The Matrix', 1, 0),
+(9, 'Oppenheimer', 1, 0),
+(10, 'Parasite', 1, 0);
 
 -- 2. Setup PE DB
 USE pe_db;
@@ -144,5 +181,15 @@ CREATE TABLE IF NOT EXISTS video (
     label_status TINYINT DEFAULT 0
 );
 
--- Thêm 1 record mẫu để test cho nhà PE (chưa encode xong)
-INSERT INTO video (id, title, status) VALUES (1, 'Test Video PE', 1);
+-- Thêm 10 record mẫu để test cho nhà PE (chưa encode xong)
+INSERT INTO video (id, title, status, csm_media_id) VALUES 
+(101, 'Avengers: Endgame - Master File', 1, 1),
+(102, 'Inception_1080p_Clean', 1, 2),
+(103, 'Interstellar_IMAX_Raw', 1, 3),
+(104, 'TDK_Final_Render_v2', 1, 4),
+(105, 'Avatar2_3D_LeftEye', 1, 5),
+(106, 'SpiderMan_NWH_WebDL', 1, 6),
+(107, 'Titanic_4K_Remaster', 1, 7),
+(108, 'Matrix_GreenFilter', 1, 8),
+(109, 'Oppenheimer_70mm_Scan', 1, 9),
+(110, 'Parasite_BW_Edition', 1, 10);

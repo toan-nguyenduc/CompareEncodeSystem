@@ -25,6 +25,21 @@ public class SecurityConfig {
     }
 
     @Bean
+    public org.springframework.boot.CommandLineRunner initAdminUser(com.example.autoevaluation.repository.autoeval.UserRepository userRepository) {
+        return args -> {
+            com.example.autoevaluation.entity.autoeval.AppUser admin = userRepository.findByUsername("admin").orElse(null);
+            if (admin == null) {
+                admin = new com.example.autoevaluation.entity.autoeval.AppUser();
+                admin.setUsername("admin");
+                admin.setRole("ROLE_ADMIN");
+            }
+            // Luôn ghi đè lại mật khẩu bằng mã hóa chuẩn của Spring Boot hiện tại
+            admin.setPassword(passwordEncoder().encode("123456"));
+            userRepository.save(admin);
+        };
+    }
+
+    @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);
@@ -38,6 +53,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable()) // Disable CSRF for simplicity with API/WebSockets for now
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/login.html", "/style.css").permitAll() // Allow login page assets
+                .requestMatchers("/api/mock-evaluate").permitAll() // Cho phép Job gọi API nội bộ không cần đăng nhập
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form

@@ -21,8 +21,8 @@
         .login-card {
             background: var(--card-bg);
             padding: 2rem;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 400px;
         }
@@ -32,12 +32,12 @@
         }
         .login-header i {
             font-size: 3rem;
-            color: var(--primary-color);
+            color: var(--primary);
             margin-bottom: 1rem;
         }
         .login-header h2 {
             margin: 0;
-            color: var(--text-color);
+            color: var(--text-main);
         }
         .form-group {
             margin-bottom: 1.5rem;
@@ -46,13 +46,13 @@
             display: block;
             margin-bottom: 0.5rem;
             font-weight: 500;
-            color: var(--text-color);
+            color: var(--text-main);
         }
         .form-group input {
             width: 100%;
             padding: 0.75rem;
             border: 1px solid var(--border-color);
-            border-radius: var(--radius);
+            border-radius: 6px;
             font-family: inherit;
             font-size: 1rem;
             box-sizing: border-box;
@@ -60,10 +60,10 @@
         .btn-login {
             width: 100%;
             padding: 0.75rem;
-            background: var(--primary-color);
+            background: var(--primary);
             color: white;
             border: none;
-            border-radius: var(--radius);
+            border-radius: 6px;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
@@ -113,7 +113,10 @@
             </div>
             <div class="form-group">
                 <label for="password">Mật khẩu</label>
-                <input type="password" id="password" name="password" required>
+                <div style="position: relative;">
+                    <input type="password" id="password" name="password" required style="padding-right: 40px; width: 100%;">
+                    <i class="fa-solid fa-eye" id="eye-icon" onclick="togglePassword()" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #94a3b8;"></i>
+                </div>
             </div>
             <button type="submit" class="btn-login">Đăng nhập</button>
         </form>
@@ -127,6 +130,26 @@
         }
         if (urlParams.has('logout')) {
             document.getElementById('logoutMsg').style.display = 'block';
+        }
+        
+        // Xóa tham số trên thanh URL để F5 không bị kẹt lỗi
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.pathname);
+        }
+
+        // Bật/tắt hiện mật khẩu
+        function togglePassword() {
+            const pwdInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eye-icon');
+            if (pwdInput.type === 'password') {
+                pwdInput.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                pwdInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
         }
     </script>
 </body>

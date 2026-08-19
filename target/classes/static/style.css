@@ -272,7 +272,66 @@ tr.main-row.expanded .chevron-icon {
 .status-evaluating { background: #e0e7ff; color: #4338ca; }
 .status-completed { background: #dcfce7; color: #166534; }
 .status-failed-score { background: #ffedd5; color: #c2410c; } /* Màu cam/hương */
-.status-error { background: #fee2e2; color: #991b1b; } /* Màu đỏ */
+.status-error {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Toast Notifications */
+#toast-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.toast {
+    min-width: 250px;
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transform: translateX(120%);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+.toast.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+.toast-icon {
+    font-size: 1.25rem;
+}
+.toast.success {
+    border-left: 4px solid #10b981;
+}
+.toast.success .toast-icon {
+    color: #10b981;
+}
+.toast.error {
+    border-left: 4px solid #ef4444;
+}
+.toast.error .toast-icon {
+    color: #ef4444;
+}
+.toast-content {
+    display: flex;
+    flex-direction: column;
+}
+.toast-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #1f2937;
+}
+.toast-msg {
+    font-size: 0.85rem;
+    color: #6b7280;
+} /* Màu đỏ */
 
 /* Score */
 .score-badge {

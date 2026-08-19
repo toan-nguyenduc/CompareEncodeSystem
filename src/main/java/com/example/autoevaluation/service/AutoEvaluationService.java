@@ -9,35 +9,54 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AutoEvaluationService {
 
     private final TrackedVideoRepository trackedVideoRepository;
     private final CsmMediaRepository csmMediaRepository;
+    private final com.example.autoevaluation.repository.pe.VideoRepository peVideoRepository;
 
     public TrackedVideo addVideoToTrack(VideoRequest request) {
-        Optional<TrackedVideo> existing = trackedVideoRepository.findByCsmIdAndPeId(request.getCsmId(), request.getPeId());
+        // Tự động tra cứu csm_media_id từ PE DB
+        com.example.autoevaluation.entity.pe.Video peVideo = peVideoRepository.findById(request.getPeId())
+            .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy Video (PE ID = " + request.getPeId() + ") trong hệ thống PE!"));
+            
+        Long resolvedCsmId = peVideo.getCsmMediaId();
+        if (resolvedCsmId == null) {
+            throw new IllegalArgumentException("Video PE này không có liên kết csm_media_id hợp lệ!");
+        }
+
+        Optional<TrackedVideo> existing = trackedVideoRepository.findByCsmIdAndPeId(resolvedCsmId, request.getPeId());
         if (existing.isPresent()) {
             throw new IllegalArgumentException("Video này đã có trong danh sách theo dõi!");
         }
 
         TrackedVideo video = new TrackedVideo();
-        video.setCsmId(request.getCsmId());
+        video.setCsmId(resolvedCsmId);
         video.setPeId(request.getPeId());
         video.setConvertPriority(request.getConvertPriority());
         video.setTrackingStatus("pending");
-        video = trackedVideoRepository.save(video);
-        return populateVideoName(video);
+        
+        try {
+            csmMediaRepository.findById(resolvedCsmId).ifPresent(csmMedia -> {
+                video.setVideoName(csmMedia.getName());
+            });
+        } catch (Exception e) {
+            log.warn("Lỗi kết nối CSM DB khi lấy tên video: {}", e.getMessage());
+        }
+
+        return trackedVideoRepository.save(video);
     }
 
-    public List<TrackedVideo> getAllTrackedVideos() {
-        List<TrackedVideo> videos = trackedVideoRepository.findAll();
-        videos.forEach(this::populateVideoName);
-        return videos;
+    public org.springframework.data.domain.Page<TrackedVideo> getTrackedVideos(String keyword, int page, int size) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "updatedAt"));
+        return trackedVideoRepository.searchByKeyword(keyword, pageable);
     }
 
     @Transactional("csmTransactionManager")
@@ -70,14 +89,6 @@ public class AutoEvaluationService {
         // Update TrackedVideo status
         trackedVideo.setTrackingStatus("encoding");
         trackedVideo.setScore(null);
-        trackedVideo = trackedVideoRepository.save(trackedVideo);
-        return populateVideoName(trackedVideo);
-    }
-
-    private TrackedVideo populateVideoName(TrackedVideo video) {
-        csmMediaRepository.findById(video.getCsmId()).ifPresent(csmMedia -> {
-            video.setVideoName(csmMedia.getName());
-        });
-        return video;
+        return trackedVideoRepository.save(trackedVideo);
     }
 }

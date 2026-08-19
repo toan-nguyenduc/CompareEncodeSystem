@@ -57,4 +57,4 @@ app:
   polling:
     # Thời gian Background Job ngủ giữa mỗi lần quét Database PE (Đơn vị: Mili-giây)
     # Ví dụ: 30000 = 30 giây, 5000 = 5 giây
-    delay: 30000 
+    delay: 5000
