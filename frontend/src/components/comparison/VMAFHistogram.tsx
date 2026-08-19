@@ -12,7 +12,7 @@ export function VMAFHistogram({ data }: VMAFHistogramProps) {
     const minScore = Math.floor(
       Math.min(...data.segments.map(s => Math.min(s.old.vmaf_mean, s.new.vmaf_mean))) / 5
     ) * 5
-    
+
     const bins: string[] = []
     const oldCounts: Record<string, number> = {}
     const newCounts: Record<string, number> = {}
@@ -29,7 +29,7 @@ export function VMAFHistogram({ data }: VMAFHistogramProps) {
       let oldBinStart = Math.floor(s.old.vmaf_mean / 5) * 5
       if (oldBinStart > 95) oldBinStart = 95
       oldCounts[`${oldBinStart}-${oldBinStart + 5}`]++
-      
+
       // new
       let newBinStart = Math.floor(s.new.vmaf_mean / 5) * 5
       if (newBinStart > 95) newBinStart = 95
@@ -59,9 +59,13 @@ export function VMAFHistogram({ data }: VMAFHistogramProps) {
         itemHeight: 12,
         textStyle: { color: '#6b7280', fontSize: 12 }
       },
-      grid: { left: 40, right: 24, bottom: 24, top: 50, containLabel: false },
+      grid: { left: 55, right: 24, bottom: 45, top: 50, containLabel: false },
       xAxis: {
         type: 'category',
+        name: 'VMAF Score Range',
+        nameLocation: 'middle',
+        nameGap: 28,
+        nameTextStyle: { color: '#111827', fontWeight: 'bold', fontSize: 11 },
         data: bins,
         axisLabel: { color: '#9ca3af', fontSize: 11 },
         axisLine: { lineStyle: { color: '#e5e7eb' } },
@@ -69,6 +73,10 @@ export function VMAFHistogram({ data }: VMAFHistogramProps) {
       },
       yAxis: {
         type: 'value',
+        name: 'Segments Count',
+        nameLocation: 'middle',
+        nameGap: 40,
+        nameTextStyle: { color: '#111827', fontWeight: 'bold', fontSize: 11 },
         axisLabel: { color: '#9ca3af', fontSize: 11 },
         splitLine: { lineStyle: { color: '#f3f4f6' } }
       },

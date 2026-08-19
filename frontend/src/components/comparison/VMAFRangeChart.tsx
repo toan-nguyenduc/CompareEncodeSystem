@@ -79,9 +79,13 @@ export function VMAFRangeChart({ data }: VMAFRangeChartProps) {
         itemHeight: 12,
         textStyle: { color: '#6b7280', fontSize: 12 }
       },
-      grid: { left: 40, right: 24, bottom: 24, top: 50, containLabel: false },
+      grid: { left: 55, right: 24, bottom: 45, top: 50, containLabel: false },
       xAxis: {
         type: 'category',
+        name: 'Segment Index',
+        nameLocation: 'middle',
+        nameGap: 28,
+        nameTextStyle: { color: '#111827', fontWeight: 'bold', fontSize: 11 },
         data: xAxisData,
         axisLabel: { color: '#9ca3af', fontSize: 11 },
         axisLine: { lineStyle: { color: '#e5e7eb' } },
@@ -90,6 +94,10 @@ export function VMAFRangeChart({ data }: VMAFRangeChartProps) {
       yAxis: {
         type: 'value',
         min: 'dataMin',
+        name: 'VMAF Score',
+        nameLocation: 'middle',
+        nameGap: 40,
+        nameTextStyle: { color: '#111827', fontWeight: 'bold', fontSize: 11 },
         axisLabel: { color: '#9ca3af', fontSize: 11 },
         splitLine: { lineStyle: { color: '#f3f4f6' } }
       },
@@ -109,6 +117,7 @@ export function VMAFRangeChart({ data }: VMAFRangeChartProps) {
           data: oldRange,
           stack: 'old',
           lineStyle: { opacity: 0 },
+          itemStyle: { color: '#d1d5db' },
           areaStyle: { color: '#d1d5db', opacity: 0.4 }, // gray-300
           symbol: 'none'
         },
@@ -127,6 +136,7 @@ export function VMAFRangeChart({ data }: VMAFRangeChartProps) {
           data: newRange,
           stack: 'new',
           lineStyle: { opacity: 0 },
+          itemStyle: { color: '#93c5fd' },
           areaStyle: { color: '#93c5fd', opacity: 0.4 }, // blue-300
           symbol: 'none'
         }

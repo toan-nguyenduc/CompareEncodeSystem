@@ -211,17 +211,6 @@ export function VMAFChart({ data }: VMAFChartProps) {
         {renderLegend(NEW_SERIES, "PE")}
       </div>
 
-      {focusedSeries && (
-        <div className="px-5 py-2 bg-gray-50 flex justify-center border-b border-gray-100">
-          <button
-            onClick={() => setFocusedSeries(null)}
-            className="text-xs text-blue-500 hover:text-blue-700 underline underline-offset-2"
-          >
-            Clear focus
-          </button>
-        </div>
-      )}
-
       {/* ── Charts ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 h-[400px]">
         <div className="h-full px-2 pb-2 pt-1 border-r border-gray-100">

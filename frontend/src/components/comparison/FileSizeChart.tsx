@@ -55,9 +55,13 @@ export function FileSizeChart({ data }: FileSizeChartProps) {
         itemHeight: 12,
         textStyle: { color: '#6b7280', fontSize: 12 }
       },
-      grid: { left: 50, right: 24, bottom: 24, top: 50, containLabel: false },
+      grid: { left: 55, right: 24, bottom: 45, top: 50, containLabel: false },
       xAxis: {
         type: 'category',
+        name: 'Segment Index',
+        nameLocation: 'middle',
+        nameGap: 28,
+        nameTextStyle: { color: '#111827', fontWeight: 'bold', fontSize: 11 },
         data: segs.map(s => s.segment_index),
         axisLabel: { color: '#9ca3af', fontSize: 11 },
         axisLine: { lineStyle: { color: '#e5e7eb' } },
@@ -65,6 +69,10 @@ export function FileSizeChart({ data }: FileSizeChartProps) {
       },
       yAxis: {
         type: 'value',
+        name: 'Size (KB)',
+        nameLocation: 'middle',
+        nameGap: 40,
+        nameTextStyle: { color: '#111827', fontWeight: 'bold', fontSize: 11 },
         axisLabel: { color: '#9ca3af', fontSize: 11 },
         splitLine: { lineStyle: { color: '#f3f4f6' } }
       },

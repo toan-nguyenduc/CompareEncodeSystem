@@ -52,6 +52,7 @@ export function EfficiencyScatter({ data }: EfficiencyScatterProps) {
         name: 'VMAF Score',
         nameLocation: 'middle',
         nameGap: 24,
+        nameTextStyle: { color: '#9ca3af', fontSize: 11 },
         scale: true,
         axisLabel: { color: '#9ca3af', fontSize: 11 },
         splitLine: { show: false },
@@ -62,6 +63,7 @@ export function EfficiencyScatter({ data }: EfficiencyScatterProps) {
         name: 'Size (KB)',
         nameLocation: 'middle',
         nameGap: 36,
+        nameTextStyle: { color: '#9ca3af', fontSize: 11 },
         scale: true,
         axisLabel: { color: '#9ca3af', fontSize: 11 },
         splitLine: { lineStyle: { color: '#f3f4f6' } }

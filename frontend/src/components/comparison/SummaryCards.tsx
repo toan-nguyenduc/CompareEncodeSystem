@@ -90,7 +90,7 @@ export function SummaryCards({ data }: SummaryCardsProps) {
           <div className="p-1.5 bg-amber-50 text-amber-600 rounded-lg">
             <Zap className="w-4 h-4" />
           </div>
-          <h3 className="text-sm font-semibold text-gray-700">PE Win Rate</h3>
+          <h3 className="text-sm font-semibold text-gray-700">Positive ΔVMAF Ratio</h3>
         </div>
         <div className="flex items-baseline gap-2 mt-1">
           <span className="text-2xl font-bold text-gray-900">{winRate.toFixed(1)}%</span>

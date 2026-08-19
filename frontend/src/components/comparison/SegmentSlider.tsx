@@ -64,7 +64,7 @@ export function SegmentSlider({ data }: SegmentSliderProps) {
         />
         <div className="flex justify-between text-[11px] text-gray-400 mt-1.5 font-medium">
           <span>{minIndex}</span>
-          <span className="text-gray-300 text-[10px]">← drag to zoom in · slide right to zoom out →</span>
+          <span className="text-gray-500 font-bold text-[10px]">← drag to zoom in · slide right to zoom out →</span>
           <span>{maxIndex}</span>
         </div>
       </div>
