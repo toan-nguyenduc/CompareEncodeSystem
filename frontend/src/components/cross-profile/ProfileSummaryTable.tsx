@@ -46,7 +46,7 @@ export function ProfileSummaryTable({ data, showOldSystem }: ProfileSummaryTable
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {sortedData.map((profile) => {
+            {sortedData.map((profile, index) => {
               // Calculate metrics
               let totalOldVmaf = 0
               let totalNewVmaf = 0
@@ -116,8 +116,8 @@ export function ProfileSummaryTable({ data, showOldSystem }: ProfileSummaryTable
                         <div className="flex items-center gap-2">
                           <div className="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
                             <div 
-                              className={`h-full ${stability >= 0.9 ? 'bg-green-500' : stability >= 0.8 ? 'bg-amber-500' : 'bg-red-500'}`}
-                              style={{ width: `${stability * 100}%` }}
+                              className="h-full"
+                              style={{ width: `${stability * 100}%`, backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4'][index % 6] }}
                             />
                           </div>
                           <span className="text-gray-500 text-xs">{stability.toFixed(2)}</span>

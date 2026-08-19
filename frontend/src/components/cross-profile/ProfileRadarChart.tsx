@@ -7,37 +7,22 @@ interface ProfileRadarChartProps {
   showOldSystem: boolean
 }
 
+const PROFILE_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4']
+
+const hexToRgba = (hex: string, alpha: number) => {
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`
+}
+
 export function ProfileRadarChart({ data, showOldSystem }: ProfileRadarChartProps) {
   const option = useMemo(() => {
-    // We will render one radar series for PE and one for Old System if toggled.
-    // However, a radar chart usually compares multiple dimensions.
-    // If we want to compare PROFILES, we could map profiles to the radar indicator axes
-    // OR we could map Metrics to the indicator axes and have profiles be the polygons.
-    // Plan: Polygon = Profile. Axes = Metrics (Avg VMAF, Min VMAF, Stability, Size Efficiency).
-    
     const sortedData = [...data].sort((a, b) => a.profile_name.localeCompare(b.profile_name))
     
-    // Normalize metrics so they fit 0-100 scale well on the radar
-    // Avg VMAF: 0-100
-    // Min VMAF: 0-100
-    // Stability (min/avg): 0-1 => 0-100
-    // Size Efficiency: Inverse of size, but how to normalize? We can skip Size Efficiency or just use a relative score. Let's just use:
-    // Avg VMAF (100)
-    // Min VMAF (100)
-    // Stability (100)
-    // Size Savings % (Old vs New) - but if PE only, we don't have savings. So let's just do VMAF metrics for simplicity.
+    const categories = ['Avg VMAF', 'Min VMAF', 'Stability']
+    const series: any[] = []
     
-    const indicators = [
-      { name: 'Avg VMAF', max: 100 },
-      { name: 'Min VMAF', max: 100 },
-      { name: 'Stability', max: 100 }
-    ]
-
-    const seriesData: any[] = []
-
-    // Distinct colors for up to 5 profiles
-    const colors = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899']
-
     sortedData.forEach((p, idx) => {
       let tOldV = 0, tNewV = 0, minOldV = 100, minNewV = 100
       p.segments.forEach(s => {
@@ -50,85 +35,84 @@ export function ProfileRadarChart({ data, showOldSystem }: ProfileRadarChartProp
       const avgNewV = tNewV / p.segments.length
       const stabOld = (minOldV / avgOldV) * 100
       const stabNew = (minNewV / avgNewV) * 100
-
-      const color = colors[idx % colors.length]
-
-      // Add PE polygon
-      seriesData.push({
-        value: [
-          Number(avgNewV.toFixed(1)),
-          Number(minNewV.toFixed(1)),
-          Number(stabNew.toFixed(1))
-        ],
-        name: `${p.profile_name} (PE)`,
-        itemStyle: { color },
-        lineStyle: { type: 'solid', width: 2 }
-      })
-
-      // Add Old System polygon if toggled
+      
+      const color = PROFILE_COLORS[idx % PROFILE_COLORS.length]
+      
       if (showOldSystem) {
-        seriesData.push({
-          value: [
+        // Old System Series
+        series.push({
+          name: `${p.profile_name} (Old)`,
+          type: 'bar',
+          data: [
             Number(avgOldV.toFixed(1)),
             Number(minOldV.toFixed(1)),
             Number(stabOld.toFixed(1))
           ],
-          name: `${p.profile_name} (Old)`,
-          itemStyle: { color },
-          lineStyle: { type: 'dashed', width: 2 }
+          itemStyle: { 
+            color: hexToRgba(color, 0.3),
+            borderColor: color,
+            borderWidth: 1
+          },
+          barGap: '0%', // Group old and PE closely
+          barCategoryGap: '20%'
         })
       }
+      
+      // PE Series
+      series.push({
+        name: showOldSystem ? `${p.profile_name} (PE)` : p.profile_name,
+        type: 'bar',
+        data: [
+          Number(avgNewV.toFixed(1)),
+          Number(minNewV.toFixed(1)),
+          Number(stabNew.toFixed(1))
+        ],
+        itemStyle: { color: color },
+        barGap: '0%',
+        barCategoryGap: '20%'
+      })
     })
 
     return {
       backgroundColor: '#ffffff',
       title: {
-        text: 'Profile Radar',
+        text: 'Profile Comparison',
         left: 16,
         top: 12,
         textStyle: { fontSize: 14, fontWeight: 600, color: '#374151' }
       },
       tooltip: {
-        trigger: 'item'
+        trigger: 'axis',
+        axisPointer: { type: 'shadow' }
       },
       legend: {
         type: 'scroll',
         orient: 'vertical',
-        right: 10,
-        top: 'center',
-        itemWidth: 12,
-        itemHeight: 12,
-        textStyle: { color: '#6b7280', fontSize: 11 }
+        right: 0,
+        top: 'middle',
+        itemWidth: 16,
+        itemHeight: 16,
+        textStyle: { color: '#4b5563', fontSize: 13, fontWeight: '500' }
       },
-      radar: {
-        indicator: indicators,
-        radius: '60%',
-        center: ['40%', '55%'],
-        splitNumber: 4,
-        axisName: {
-          color: '#6b7280',
-          fontSize: 11
-        },
-        splitArea: {
-          areaStyle: {
-            color: ['#f9fafb', '#ffffff']
-          }
-        },
-        axisLine: {
-          lineStyle: { color: '#e5e7eb' }
-        },
-        splitLine: {
-          lineStyle: { color: '#e5e7eb' }
-        }
+      grid: { left: 90, right: 140, bottom: 45, top: 40, containLabel: false },
+      xAxis: {
+        type: 'value',
+        name: 'Score (0 - 100)',
+        nameLocation: 'middle',
+        nameGap: 28,
+        nameTextStyle: { color: '#111827', fontWeight: 'bold', fontSize: 11 },
+        max: 100,
+        axisLabel: { color: '#9ca3af', fontSize: 11 },
+        splitLine: { lineStyle: { color: '#f3f4f6' } }
       },
-      series: [
-        {
-          name: 'Radar',
-          type: 'radar',
-          data: seriesData,
-          symbolSize: 4
-        }
-      ]
+      yAxis: {
+        type: 'category',
+        data: categories,
+        axisLabel: { color: '#111827', fontWeight: 'bold', fontSize: 11 },
+        axisLine: { lineStyle: { color: '#e5e7eb' } },
+        axisTick: { show: false }
+      },
+      series: series
     }
   }, [data, showOldSystem])
 

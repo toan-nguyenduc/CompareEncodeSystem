@@ -46,13 +46,13 @@ export function EfficiencyScatter({ data }: EfficiencyScatterProps) {
         itemHeight: 12,
         textStyle: { color: '#6b7280', fontSize: 12 }
       },
-      grid: { left: 50, right: 24, bottom: 40, top: 50, containLabel: false },
+      grid: { left: 55, right: 24, bottom: 45, top: 50, containLabel: false },
       xAxis: {
         type: 'value',
         name: 'VMAF Score',
         nameLocation: 'middle',
-        nameGap: 24,
-        nameTextStyle: { color: '#9ca3af', fontSize: 11 },
+        nameGap: 28,
+        nameTextStyle: { color: '#111827', fontWeight: 'bold', fontSize: 11 },
         scale: true,
         axisLabel: { color: '#9ca3af', fontSize: 11 },
         splitLine: { show: false },
@@ -62,8 +62,8 @@ export function EfficiencyScatter({ data }: EfficiencyScatterProps) {
         type: 'value',
         name: 'Size (KB)',
         nameLocation: 'middle',
-        nameGap: 36,
-        nameTextStyle: { color: '#9ca3af', fontSize: 11 },
+        nameGap: 40,
+        nameTextStyle: { color: '#111827', fontWeight: 'bold', fontSize: 11 },
         scale: true,
         axisLabel: { color: '#9ca3af', fontSize: 11 },
         splitLine: { lineStyle: { color: '#f3f4f6' } }

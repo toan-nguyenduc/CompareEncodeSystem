@@ -9,6 +9,13 @@ interface ProfileBarChartProps {
 
 type MetricType = 'vmaf' | 'size'
 
+const hexToRgba = (hex: string, alpha: number) => {
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`
+}
+
 export function ProfileBarChart({ data, showOldSystem }: ProfileBarChartProps) {
   const [metric, setMetric] = useState<MetricType>('vmaf')
   
@@ -39,6 +46,7 @@ export function ProfileBarChart({ data, showOldSystem }: ProfileBarChartProps) {
 
     const isVmaf = metric === 'vmaf'
     
+    const PROFILE_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4']
     let series: any[] = []
     if (showOldSystem) {
       series = [
@@ -46,13 +54,19 @@ export function ProfileBarChart({ data, showOldSystem }: ProfileBarChartProps) {
           name: 'Old System',
           type: 'bar',
           data: isVmaf ? oldVmaf : oldSize,
-          itemStyle: { color: '#9ca3af' }
+          itemStyle: { 
+            color: (params: any) => hexToRgba(PROFILE_COLORS[params.dataIndex % 6], 0.3),
+            borderColor: (params: any) => PROFILE_COLORS[params.dataIndex % 6],
+            borderWidth: 1
+          }
         },
         {
           name: 'PE',
           type: 'bar',
           data: isVmaf ? newVmaf : newSize,
-          itemStyle: { color: '#3b82f6' }
+          itemStyle: { 
+            color: (params: any) => PROFILE_COLORS[params.dataIndex % 6]
+          }
         }
       ]
     } else {
@@ -61,7 +75,9 @@ export function ProfileBarChart({ data, showOldSystem }: ProfileBarChartProps) {
           name: 'PE',
           type: 'bar',
           data: isVmaf ? newVmaf : newSize,
-          itemStyle: { color: '#3b82f6' }
+          itemStyle: { 
+            color: (params: any) => PROFILE_COLORS[params.dataIndex % 6]
+          }
         }
       ]
     }
@@ -72,14 +88,7 @@ export function ProfileBarChart({ data, showOldSystem }: ProfileBarChartProps) {
         trigger: 'axis',
         axisPointer: { type: 'shadow' }
       },
-      legend: {
-        data: showOldSystem ? ['Old System', 'PE'] : ['PE'],
-        top: 16,
-        right: 16,
-        itemWidth: 12,
-        itemHeight: 12,
-        textStyle: { color: '#6b7280', fontSize: 12 }
-      },
+      legend: { show: false },
       grid: { left: 45, right: 24, bottom: 24, top: 60, containLabel: false },
       xAxis: {
         type: 'category',
