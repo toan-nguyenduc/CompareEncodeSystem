@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Comparison } from './pages/Comparison'
 import { CrossProfile } from './pages/CrossProfile'
 import { DevIndex } from './pages/DevIndex'
-import { Dashboard } from './pages/Dashboard'
+
 
 const queryClient = new QueryClient({
   defaultOptions: {
