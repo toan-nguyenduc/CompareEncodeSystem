@@ -10,6 +10,7 @@ export function DevIndex() {
           Click any link below to test the comparison page. These links are dynamically generated based on the current mock data.
         </p>
 
+        {/* Tạm thời ẩn Aggregate Dashboard theo yêu cầu
         <div className="mb-6 flex">
           <Link
             to="/dashboard"
@@ -18,6 +19,7 @@ export function DevIndex() {
             View Aggregate Dashboard
           </Link>
         </div>
+        */}
 
         <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
           {allVideoSummaries.map((video) => (

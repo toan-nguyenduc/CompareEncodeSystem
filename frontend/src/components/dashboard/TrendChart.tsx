@@ -46,6 +46,21 @@ export function TrendChart({ data }: TrendChartProps) {
         axisLabel: { color: '#9ca3af', fontSize: 11 },
         splitLine: { lineStyle: { color: '#f3f4f6' } }
       },
+      dataZoom: [
+        {
+          type: 'slider',
+          show: true,
+          xAxisIndex: [0],
+          start: 0,
+          end: videoNames.length > 30 ? (30 / videoNames.length) * 100 : 100,
+          bottom: 0,
+          height: 16,
+          borderColor: 'transparent',
+          handleIcon: 'path://M5.1 1.2L1 5.3l4.1 4.1L5.1 1.2zM9.9 1.2l4.1 4.1-4.1 4.1L9.9 1.2z',
+          handleSize: '80%',
+          handleStyle: { color: '#cbd5e1' }
+        }
+      ],
       series: [
         {
           name: 'Old System',

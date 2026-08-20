@@ -53,17 +53,21 @@ export function Dashboard() {
 
       {/* Main content */}
       <div className="container max-w-7xl mx-auto px-6 py-8 space-y-6">
+        {/* Row 1: VMAF Improvement Rate */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <TrendChart data={summaryData} />
-          </div>
           <div className="lg:col-span-1">
             <WinRateChart data={summaryData} />
           </div>
         </div>
 
+        {/* Row 2: File Size Savings Distribution & VMAF Trend Across Videos */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <SavingsHistogram data={summaryData} />
+          <TrendChart data={summaryData} />
+        </div>
+
+        {/* Row 3: VMAF Diff vs Size Savings */}
+        <div className="grid grid-cols-1 gap-6">
           <VideoScatter data={summaryData} />
         </div>
 

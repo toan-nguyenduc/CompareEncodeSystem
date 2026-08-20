@@ -33,11 +33,17 @@ export function SavingsHistogram({ data }: SavingsHistogramProps) {
       }
     })
 
-    const chartData = counts.map((count, i) => {
-      const isPositive = i >= 4 // 0% and above
-      return {
-        value: count,
-        itemStyle: { color: isPositive ? '#10b981' : '#ef4444' }
+    const filteredChartData: any[] = []
+    const filteredBinLabels: string[] = []
+
+    counts.forEach((count, i) => {
+      if (count > 0) {
+        const isPositive = i >= 4 // 0% and above
+        filteredChartData.push({
+          value: count,
+          itemStyle: { color: isPositive ? '#10b981' : '#ef4444' }
+        })
+        filteredBinLabels.push(binLabels[i])
       }
     })
 
@@ -56,7 +62,7 @@ export function SavingsHistogram({ data }: SavingsHistogramProps) {
       grid: { left: 40, right: 24, bottom: 40, top: 50, containLabel: false },
       xAxis: {
         type: 'category',
-        data: binLabels,
+        data: filteredBinLabels,
         axisLabel: { color: '#9ca3af', fontSize: 10, rotate: 45 },
         axisLine: { lineStyle: { color: '#e5e7eb' } },
         axisTick: { show: false }
@@ -72,7 +78,7 @@ export function SavingsHistogram({ data }: SavingsHistogramProps) {
         {
           name: 'Count',
           type: 'bar',
-          data: chartData
+          data: filteredChartData
         }
       ]
     }

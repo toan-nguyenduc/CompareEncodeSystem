@@ -58,6 +58,7 @@ export function VideoScatter({ data }: VideoScatterProps) {
       xAxis: {
         type: 'value',
         name: 'Δ VMAF',
+        min: 'dataMin', // Zoom-in effect
         nameLocation: 'middle',
         nameGap: 24,
         axisLabel: { color: '#9ca3af', fontSize: 11 },
@@ -80,10 +81,11 @@ export function VideoScatter({ data }: VideoScatterProps) {
           symbolSize: 8,
           markLine: {
             animation: false,
-            lineStyle: { type: 'solid', color: '#e5e7eb' },
+            lineStyle: { type: 'dashed', color: '#cbd5e1', width: 2 },
+            label: { show: true, position: 'end', color: '#64748b' },
             data: [
-              { xAxis: 0, label: { show: false }, symbol: 'none' },
-              { yAxis: 0, label: { show: false }, symbol: 'none' }
+              { xAxis: 1.0, name: 'VMAF = +1' },
+              { yAxis: 10, name: 'Savings = 10%' }
             ]
           }
         }

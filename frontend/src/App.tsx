@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Comparison } from './pages/Comparison'
 import { CrossProfile } from './pages/CrossProfile'
 import { DevIndex } from './pages/DevIndex'
+import { Dashboard } from './pages/Dashboard'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,6 +23,7 @@ export default function App() {
             <Route path="/" element={<DevIndex />} />
             <Route path="/comparison/:videoId" element={<Comparison />} />
             <Route path="/cross-profile/:videoId" element={<CrossProfile />} />
+            {/* <Route path="/dashboard" element={<Dashboard />} /> */}
           </Routes>
         </div>
       </Router>
